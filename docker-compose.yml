@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .  # Diretório da raiz do projeto
+      dockerfile: build/dev/Dockerfile  # Caminho para o Dockerfile
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/app  # Mapeia o diretório do projeto local para o container
+    ports:
+      - "8000:8000"  # Expõe a aplicação Django
+    environment:
+      DEBUG: "1"
+      DJANGO_ALLOWED_HOSTS: "localhost 0.0.0.0"
+    networks:
+      - django_network
+
+networks:
+  django_network:
