@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpRequest
+from django.http import HttpResponse, HttpRequest, JsonResponse
+from django.core import serializers
 from .models import Cliente, Carro
 import re
 
@@ -7,7 +8,8 @@ import re
 def clientes(request: HttpRequest):
     
     if request.method == 'GET':
-        return render(request=request, template_name='clientes.html')
+        clientes_list = Cliente.objects.all()
+        return render(request=request, template_name='clientes.html', context={"clientes": clientes_list})
     
     elif request.method == 'POST':
         nome = request.POST.get('nome')
@@ -45,3 +47,11 @@ def clientes(request: HttpRequest):
         
         
         return HttpResponse('teste')
+
+def att_clientes(request: HttpRequest):
+    id_cliente = request.POST.get('id_cliente')
+    cliente = Cliente.objects.filter(id=id_cliente)
+    
+    cliente_json = serializers.serialize('json', cliente)
+    
+    return JsonResponse(cliente_json)
